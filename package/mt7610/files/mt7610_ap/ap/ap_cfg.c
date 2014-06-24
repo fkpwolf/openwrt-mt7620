@@ -12046,7 +12046,8 @@ INT Set_DyncVgaEnable_Proc(
 
 
 /* +++ added by Red@Ralink, 2009/09/30 */
-VOID RTMPIoctlGetMacTableStaInfo(
+//FIXME common/cmm_info.c also define
+VOID RTMPIoctlGetMacTableStaInfo___________(
 	IN PRTMP_ADAPTER pAd, 
 	IN RTMP_IOCTL_INPUT_STRUCT *wrq)
 {

@@ -32,7 +32,10 @@
 #include "rtmp_comm.h"
 #include "rt_os_util.h"
 #include "rt_os_net.h"
+#include <linux/kernel.h>
 #include <linux/pci.h>
+#include <linux/types.h>
+#include <linux/proc_fs.h>
 
 #include "os/rt_drv.h"
 /* */
@@ -41,8 +44,8 @@
 /*extern int rt28xx_close(IN struct net_device *net_dev); */
 /*extern int rt28xx_open(struct net_device *net_dev); */
 
-static VOID __devexit rt2860_remove_one(struct pci_dev *pci_dev);
-static INT __devinit rt2860_probe(struct pci_dev *pci_dev, const struct pci_device_id  *ent);
+static VOID __exit rt2860_remove_one(struct pci_dev *pci_dev);
+static INT __init rt2860_probe(struct pci_dev *pci_dev, const struct pci_device_id  *ent);
 static void __exit rt2860_cleanup_module(void);
 static int __init rt2860_init_module(void);
 
@@ -52,6 +55,7 @@ static int __init rt2860_init_module(void);
 static struct proc_dir_entry *ralink_proc_directory;
 static struct proc_dir_entry *ralink_proc_version;
 static struct proc_dir_entry *ralink_proc_version_date;
+
 
 static int readVersion(char *page, char **start, off_t off, int count, int *eof, void *data)
 {
@@ -68,12 +72,24 @@ static int readVersionDate(char *page, char **start, off_t off, int count, int *
 	return len;
 }
 
+static const struct file_operations ralink_version_fops = {
+        .owner = THIS_MODULE,
+        .read = &readVersion, //TODO still has waring here
+};
+static const struct file_operations ralink_version_date_fops = {
+        .owner = THIS_MODULE,
+        .read = &readVersionDate,
+};
+
+
 int RalinkRT5592_proc_init(void)
 {
 	ralink_proc_directory = proc_mkdir(RalinkRT5592_PROC_DIR_NAME,NULL);
 
 	if(ralink_proc_directory){
-		if ((ralink_proc_version = create_proc_entry(RalinkRT5592_PROC_VERSION, 0, ralink_proc_directory))){
+		ralink_proc_version = proc_create(RalinkRT5592_PROC_VERSION, 0, ralink_proc_directory,&ralink_version_fops); 
+		ralink_proc_version_date = proc_create(RalinkRT5592_PROC_VERSION_DATE, 0, ralink_proc_directory,&ralink_version_date_fops); 
+		/*if ((ralink_proc_version = create_proc_entry(RalinkRT5592_PROC_VERSION, 0, ralink_proc_directory))){
 			ralink_proc_version->read_proc = (read_proc_t*)&readVersion;
 		}else{
 			return -ENOMEM;
@@ -82,7 +98,7 @@ int RalinkRT5592_proc_init(void)
 			ralink_proc_version_date->read_proc = (read_proc_t*)&readVersionDate;
 		}else{
 			return -ENOMEM;		
-		}
+		}*/
 
 	}
 
@@ -122,7 +138,7 @@ static int rt2860_resume(struct pci_dev *pci_dev);
 /* */
 /* Ralink PCI device table, include all supported chipsets */
 /* */
-static struct pci_device_id rt2860_pci_tbl[] __devinitdata =
+static struct pci_device_id rt2860_pci_tbl[] __initdata =
 {
 #ifdef RT3290
 	{PCI_DEVICE(NIC_PCI_VENDOR_ID, NIC3290_PCIe_DEVICE_ID)},
@@ -157,9 +173,9 @@ static struct pci_driver rt2860_driver =
     id_table:   rt2860_pci_tbl,
     probe:      rt2860_probe,
 #if LINUX_VERSION_CODE >= 0x20412
-    remove:     __devexit_p(rt2860_remove_one),
+    remove:     __exit_p(rt2860_remove_one),
 #else
-    remove:     __devexit(rt2860_remove_one),
+    remove:     __exit(rt2860_remove_one),
 #endif
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
@@ -362,7 +378,7 @@ module_exit(rt2860_cleanup_module);
 /* */
 /* PCI device probe & initialization function */
 /* */
-static int __devinit rt2860_probe(struct pci_dev *pdev, const struct pci_device_id *pci_id)
+static int __init rt2860_probe(struct pci_dev *pdev, const struct pci_device_id *pci_id)
 {
 	VOID 				*pAd = NULL;
 	struct  net_device	*net_dev;
@@ -518,7 +534,7 @@ err_out:
 }
 
 
-static VOID __devexit rt2860_remove_one(struct pci_dev *pci_dev)
+static VOID __exit rt2860_remove_one(struct pci_dev *pci_dev)
 {
 	PNET_DEV net_dev = pci_get_drvdata(pci_dev);
 	VOID *pAd = NULL;

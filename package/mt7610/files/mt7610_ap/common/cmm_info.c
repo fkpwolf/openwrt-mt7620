@@ -2175,7 +2175,7 @@ VOID RTMPIoctlGetSiteSurvey(
 
 
 /* +++ added by Red@Ralink, 2009/09/30 */
-static VOID RTMPIoctlGetMacTableStaInfo(
+VOID RTMPIoctlGetMacTableStaInfo(
 	IN PRTMP_ADAPTER pAd, 
 	IN RTMP_IOCTL_INPUT_STRUCT *wrq)
 {

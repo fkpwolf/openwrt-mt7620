@@ -1,6 +1,9 @@
-EXTRA_CFLAGS = -Idrivers/net/wireless/MT7610_ap/include #-Idrivers/net/wireless/MT7610_ap/ate/include
+#EXTRA_CFLAGS = -Idrivers/net/wireless/MT7610_ap/include #-Idrivers/net/wireless/MT7610_ap/ate/include
+EXTRA_CFLAGS = -I$(SOURCE_DIR)/mt7610_ap/include -I$(SOURCE_DIR)/mt7610_ap/ate/include
 
-obj-$(CONFIG_MT7610_AP) += MT7610_ap.o
+
+#obj-$(CONFIG_MT7610_AP) += MT7610_ap.o
+obj-m += MT7610_ap.o
 
 MT7610_ap-objs += rate_ctrl/ra_ctrl.o
 MT7610_ap-objs += rate_ctrl/alg_grp.o
@@ -340,6 +343,9 @@ endif
 ifeq ($(CONFIG_CAMEO_NETWORK_DIR808),y)
 	EXTRA_CFLAGS += -DCAMEO_NETWORK_DIR808L
 endif
+
+EXTRA_CFLAGS += -DCAMEO_NETWORK_DIR808L
+
 ifeq ($(CONFIG_CAMEO_NETWORK_DIR810),y)
 	EXTRA_CFLAGS += -DCAMEO_NETWORK_DIR810L
 endif

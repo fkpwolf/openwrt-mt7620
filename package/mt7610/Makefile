@@ -24,7 +24,7 @@ define KernelPackage/mt7610
   TITLE:=Driver for mt7610
   DEPENDS:=@TARGET_ramips +wireless-tools +maccalc
   DEFAULT:=y if (CONFIG_TARGET_ramips_mt7610n || CONFIG_TARGET_ramips_mt7610a)
-  FILES:=$(PKG_BUILD_DIR)/mt7610_ap/mt7610_ap.ko
+  FILES:=$(PKG_BUILD_DIR)/mt7610_ap/MT7610_ap.ko
   AUTOLOAD:=$(call AutoLoad,50,mt7610_ap)
 endef
 
