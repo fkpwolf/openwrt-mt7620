@@ -61,7 +61,7 @@ endef
 
 define KernelPackage/mt7610/install
 	$(INSTALL_DIR) $(1)/lib/wifi
-	$(INSTALL_DATA) ./files/mt7610.sh $(1)/lib/wifi
+	#$(INSTALL_DATA) ./files/mt7610.sh $(1)/lib/wifi
 endef
 
 $(eval $(call KernelPackage,mt7610))

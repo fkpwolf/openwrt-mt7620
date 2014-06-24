@@ -682,6 +682,7 @@ Image/Build/Profile/XDR=$(call BuildFirmware/XDR8M/$(1),$(1),xdr,XDR)
 ifeq ($(SUBTARGET),mt7620a)
 define Image/Build/Profile/Default
 	$(call Image/Build/Profile/XDR,$(1))
+	$(call Image/Build/Profile/DIR-810L,$(1))
 endef
 endif
 
